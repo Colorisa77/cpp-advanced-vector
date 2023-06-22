@@ -177,22 +177,7 @@ public:
 
     template<typename Type>
     void PushBack(Type&& elem) {
-        if(data_.Capacity() == size_) {
-            if(size_ == 0) {
-                RawMemory<T> temp(size_ + 1);
-                new (temp.GetAddress()) T(std::forward<Type>(elem));
-                data_.Swap(temp);
-            } else {
-                RawMemory<T> temp(data_.Capacity() * 2);
-                new (temp + size_) T(std::forward<Type>(elem));
-                CopyOrMove(data_.GetAddress(), temp.GetAddress(), size_);
-                data_.Swap(temp);
-                std::destroy_n(temp.GetAddress(), size_);
-            }
-        } else {
-            new (data_.GetAddress() + size_) T(std::forward<Type>(elem));
-        }
-        ++size_;
+        Emplace(cend(), std::forward<Type>(elem));
     }
 
     void PopBack() noexcept {
